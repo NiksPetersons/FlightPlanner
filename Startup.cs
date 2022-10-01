@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Flight_planner.Filters;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.EntityFrameworkCore;
 
 namespace Flight_planner
 {
@@ -14,6 +15,11 @@ namespace Flight_planner
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            using (var client = new FlightPlannerDbContext())
+            {
+                client.Database.EnsureCreated();
+            }
         }
 
         public IConfiguration Configuration { get; }
@@ -30,6 +36,9 @@ namespace Flight_planner
 
             services.AddAuthentication("BasicAuthentication")
                 .AddScheme<AuthenticationSchemeOptions, BasicAuthorizationHandler>("BasicAuthentication", null);
+
+
+            services.AddEntityFrameworkSqlite().AddDbContext<FlightPlannerDbContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

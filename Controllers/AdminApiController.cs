@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Flight_planner.Controllers
 {
@@ -9,44 +11,69 @@ namespace Flight_planner.Controllers
     [ApiController, Authorize]
     public class AdminApiController : ControllerBase
     {
+        private readonly FlightPlannerDbContext _context;
+        private static object _balanceLock = new object();
+
+        public AdminApiController(FlightPlannerDbContext context)
+        {
+            _context = context;
+        }
+
         [Route("flights/{id}")]
         [HttpGet]
         public IActionResult GetFlight(int id)
         {
-            var flight = FlightList.GetFlight(id);
-
-            if (flight == null)
+            lock (_balanceLock)
             {
-                return NotFound();
-            }
+                var flight = FlightList.GetFlight(id, _context);
 
-            return Ok(flight);
+                if (flight == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(flight);
+            }
         }
 
         [Route("flights")]
         [HttpPut]
         public IActionResult PutFlights(Flight flight)
         {
-            if (!FlightList.FlightValidation(flight))
+            lock (_balanceLock)
             {
-                return BadRequest();
-            }
+                if (!Validations.FlightValidation(flight))
+                {
+                    return BadRequest();
+                }
 
-            if (FlightList.DoesFlightExist(flight))
-            {
-                return Conflict();
-            }
+                if (Validations.DoesFlightExist(flight, _context))
+                {
+                    return Conflict();
+                }
 
-            flight = FlightList.AddFlight(flight);
-            return Created("", flight);
+                _context.Flights.Add(flight);
+                _context.SaveChanges();
+                return Created("", flight);
+            }
         }
 
         [Route("flights/{id}")]
         [HttpDelete]
         public IActionResult DeleteFlight(int id)
         {
-            FlightList.DeleteFlightById(id);
-            return Ok();
+            lock (_balanceLock)
+            {
+                var flight = _context.Flights.FirstOrDefault(x => x.Id == id);
+
+                if (flight != null)
+                {
+                    _context.Flights.Remove(flight);
+                    _context.SaveChanges();
+                }
+
+                return Ok();
+            }
         }
     }
 }

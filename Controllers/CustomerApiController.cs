@@ -6,11 +6,19 @@ namespace Flight_planner.Controllers
     [ApiController]
     public class CustomerApiController : ControllerBase
     {
+
+        private readonly FlightPlannerDbContext _context;
+
+        public CustomerApiController(FlightPlannerDbContext context)
+        {
+            _context = context;
+        }
+
         [Route("airports")]
         [HttpGet]
         public IActionResult GetAirport(string search)
         {
-            Airport[] airports = FlightList.GetAirport(search);
+            Airport[] airports = FlightList.GetAirport(search, _context);
             return Ok(airports);
         }
 
@@ -23,7 +31,7 @@ namespace Flight_planner.Controllers
                 return BadRequest();
             }
 
-            PageResults results = FlightList.SearchFlights(request);
+            PageResults results = FlightList.SearchFlights(request, _context);
             return Ok(results);
         }
 
@@ -31,7 +39,7 @@ namespace Flight_planner.Controllers
         [HttpGet]
         public IActionResult GetFlight(int id)
         {
-            var flight = FlightList.GetFlight(id);
+            var flight = FlightList.GetFlight(id, _context);
 
             if (flight == null)
             {

@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Flight_planner.Filters;
+using FlightPlanner.Services;
+using FlightPlanner_Core.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 
@@ -39,6 +41,9 @@ namespace Flight_planner
 
 
             services.AddEntityFrameworkSqlite().AddDbContext<FlightPlannerDbContext>();
+            services.AddScoped<IDbService, DbService>();
+            services.AddScoped<IEntityService<Flight>, EntityService<Flight>>();
+            services.AddScoped<IFlightService>()
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

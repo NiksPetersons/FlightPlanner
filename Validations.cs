@@ -1,4 +1,5 @@
 ﻿using System;
+using FlightPlanner.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Flight_planner

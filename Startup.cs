@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Flight_planner.Filters;
+using FlightPlanner.Data;
 using FlightPlanner.Services;
 using FlightPlanner_Core.Services;
 using FlightPlanner_Core.Validations;
@@ -43,7 +44,7 @@ namespace Flight_planner
 
             services.AddEntityFrameworkSqlite().AddDbContext<FlightPlannerDbContext>();
 
-            services.AddScoped<IFlightPlannerDbContext, FlightPlannerDbContext>();
+            //services.AddScoped<IFlightPlannerDbContext, FlightPlannerDbContext>();
             services.AddScoped<IDbService, DbService>();
             services.AddScoped<IEntityService<Flight>, EntityService<Flight>>();
             services.AddScoped<IEntityService<Airport>, EntityService<Airport>>();

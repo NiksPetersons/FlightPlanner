@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using Flight_planner.Filters;
 using FlightPlanner.Services;
 using FlightPlanner_Core.Services;
+using FlightPlanner_Core.Validations;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,11 +42,15 @@ namespace Flight_planner
 
 
             services.AddEntityFrameworkSqlite().AddDbContext<FlightPlannerDbContext>();
-
+            
             services.AddScoped<IDbService, DbService>();
             services.AddScoped<IEntityService<Flight>, EntityService<Flight>>();
             services.AddScoped<IEntityService<Airport>, EntityService<Airport>>();
             services.AddScoped<IFlightService, FlightService>();
+            //validators
+            services.AddScoped<IFlightValidator, CarrierValidator>();
+            services.AddScoped<IFlightValidator, FlightTimeValidator>();
+            services.AddScoped<IFlightValidator, AirportValidator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using FlightPlanner_Core.Services;
+using FlightPlanner_Core.Validations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +15,13 @@ namespace Flight_planner.Controllers
     public class AdminApiController : ControllerBase
     {
         private readonly IFlightService _flightService;
+        private readonly IEnumerable<IFlightValidator> _validators;
         private static object _balanceLock = new object();
 
-        public AdminApiController(IFlightService flightService)
+        public AdminApiController(IFlightService flightService, IEnumerable<IFlightValidator> validators)
         {
             _flightService = flightService;
+            _validators = validators;
         }
 
         [Route("flights/{id}")]
@@ -52,6 +56,15 @@ namespace Flight_planner.Controllers
                 //{
                 //    return Conflict();
                 //}
+                if (!_validators.All(x => x.IsValid(flight)))
+                {
+                    return BadRequest();
+                }
+
+                if (_flightService.DoesFlightExist(flight))
+                {
+                    return Conflict();
+                }
 
                 _flightService.Create(flight);
                 return Created("", flight);

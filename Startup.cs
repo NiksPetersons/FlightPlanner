@@ -41,9 +41,11 @@ namespace Flight_planner
 
 
             services.AddEntityFrameworkSqlite().AddDbContext<FlightPlannerDbContext>();
+
             services.AddScoped<IDbService, DbService>();
             services.AddScoped<IEntityService<Flight>, EntityService<Flight>>();
-            services.AddScoped<IFlightService>()
+            services.AddScoped<IEntityService<Airport>, EntityService<Airport>>();
+            services.AddScoped<IFlightService, FlightService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

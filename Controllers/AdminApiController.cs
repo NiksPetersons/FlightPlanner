@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using FlightPlanner_Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,12 +12,12 @@ namespace Flight_planner.Controllers
     [ApiController, Authorize]
     public class AdminApiController : ControllerBase
     {
-        private readonly FlightPlannerDbContext _context;
+        private readonly IFlightService _flightService;
         private static object _balanceLock = new object();
 
-        public AdminApiController(FlightPlannerDbContext context)
+        public AdminApiController(IFlightService flightService)
         {
-            _context = context;
+            _flightService = flightService;
         }
 
         [Route("flights/{id}")]
@@ -25,7 +26,7 @@ namespace Flight_planner.Controllers
         {
             lock (_balanceLock)
             {
-                var flight = FlightList.GetFlight(id, _context);
+                var flight = _flightService.GetCompleteFlightById(id);
 
                 if (flight == null)
                 {
@@ -42,18 +43,17 @@ namespace Flight_planner.Controllers
         {
             lock (_balanceLock)
             {
-                if (!Validations.FlightValidation(flight))
-                {
-                    return BadRequest();
-                }
+                //if (!Validations.FlightValidation(flight))
+                //{
+                //    return BadRequest();
+                //}
 
-                if (Validations.DoesFlightExist(flight, _context))
-                {
-                    return Conflict();
-                }
+                //if (Validations.DoesFlightExist(flight, _context))
+                //{
+                //    return Conflict();
+                //}
 
-                _context.Flights.Add(flight);
-                _context.SaveChanges();
+                _flightService.Create(flight);
                 return Created("", flight);
             }
         }
@@ -64,12 +64,11 @@ namespace Flight_planner.Controllers
         {
             lock (_balanceLock)
             {
-                var flight = _context.Flights.FirstOrDefault(x => x.Id == id);
+                var flight = _flightService.GetCompleteFlightById(id);
 
                 if (flight != null)
                 {
-                    _context.Flights.Remove(flight);
-                    _context.SaveChanges();
+                    _flightService.Delete(flight);
                 }
 
                 return Ok();

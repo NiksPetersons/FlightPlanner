@@ -44,7 +44,7 @@ namespace Flight_planner
 
             services.AddEntityFrameworkSqlite().AddDbContext<FlightPlannerDbContext>();
 
-            //services.AddScoped<IFlightPlannerDbContext, FlightPlannerDbContext>();
+            services.AddScoped<IFlightPlannerDbContext, FlightPlannerDbContext>();
             services.AddScoped<IDbService, DbService>();
             services.AddScoped<IEntityService<Flight>, EntityService<Flight>>();
             services.AddScoped<IEntityService<Airport>, EntityService<Airport>>();

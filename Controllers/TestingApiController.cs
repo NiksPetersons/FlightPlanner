@@ -1,26 +1,34 @@
-﻿//using Microsoft.AspNetCore.Mvc;
+﻿using FlightPlanner_Core.Services;
+using Microsoft.AspNetCore.Mvc;
 
-//namespace Flight_planner.Controllers
-//{
-//    [Route("testing-api")]
-//    [ApiController]
-//    public class TestingApiController : ControllerBase
-//    {
-//        private readonly FlightPlannerDbContext _context;
+namespace Flight_planner.Controllers
+{
+    [Route("testing-api")]
+    [ApiController]
+    public class TestingApiController : ControllerBase
+    {
+        //private readonly IFlightService _flightService;
 
-//        public TestingApiController(FlightPlannerDbContext context)
-//        {
-//            _context = context;
-//        }
+        //public TestingApiController(IFlightService flightService)
+        //{
+        //    _flightService = flightService;
+        //}
+        private readonly IFlightPlannerDbContext _context;
 
-//        [HttpPost]
-//        [Route("clear")]
-//        public IActionResult Clear()
-//        {
-//            _context.Flights.RemoveRange(_context.Flights);
-//            _context.Airports.RemoveRange(_context.Airports);
-//            _context.SaveChanges();
-//            return Ok();
-//        }
-//    }
-//}
+        public TestingApiController(IFlightPlannerDbContext context)
+        {
+            _context = context;
+        }
+
+        [HttpPost]
+        [Route("clear")]
+        public IActionResult Clear()
+        {
+            _context.Airports.RemoveRange(_context.Airports);
+            _context.Flights.RemoveRange(_context.Flights);
+
+            _context.SaveChanges();
+            return Ok();
+        }
+    }
+}

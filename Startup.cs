@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -53,6 +54,7 @@ namespace Flight_planner
             services.AddScoped<IFlightValidator, CarrierValidator>();
             services.AddScoped<IFlightValidator, FlightTimeValidator>();
             services.AddScoped<IFlightValidator, AirportValidator>();
+            services.AddSingleton<IMapper>(AutoMapperConfig.CreateMapper());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

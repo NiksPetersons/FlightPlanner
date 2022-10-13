@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
+using Flight_planner.Models;
 using FlightPlanner_Core.Services;
 using FlightPlanner_Core.Validations;
 using Microsoft.AspNetCore.Authorization;
@@ -16,12 +18,14 @@ namespace Flight_planner.Controllers
     {
         private readonly IFlightService _flightService;
         private readonly IEnumerable<IFlightValidator> _validators;
+        private readonly IMapper _mapper;
         private static object _balanceLock = new object();
 
-        public AdminApiController(IFlightService flightService, IEnumerable<IFlightValidator> validators)
+        public AdminApiController(IFlightService flightService, IEnumerable<IFlightValidator> validators, IMapper mapper)
         {
             _flightService = flightService;
             _validators = validators;
+            _mapper = mapper;
         }
 
         [Route("flights/{id}")]
@@ -37,25 +41,19 @@ namespace Flight_planner.Controllers
                     return NotFound();
                 }
 
-                return Ok(flight);
+                var response = _mapper.Map<FlightRequest>(flight);
+                return Ok(response);
             }
         }
 
         [Route("flights")]
         [HttpPut]
-        public IActionResult PutFlights(Flight flight)
+        public IActionResult PutFlights(FlightRequest request)
         {
             lock (_balanceLock)
             {
-                //if (!Validations.FlightValidation(flight))
-                //{
-                //    return BadRequest();
-                //}
+                var flight = _mapper.Map<Flight>(request);
 
-                //if (Validations.DoesFlightExist(flight, _context))
-                //{
-                //    return Conflict();
-                //}
                 if (!_validators.All(x => x.IsValid(flight)))
                 {
                     return BadRequest();
@@ -67,7 +65,9 @@ namespace Flight_planner.Controllers
                 }
 
                 _flightService.Create(flight);
-                return Created("", flight);
+                request = _mapper.Map<FlightRequest>(flight);
+
+                return Created("", request);
             }
         }
 

@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using Flight_planner.Filters;
 using FlightPlanner.Data;
 using FlightPlanner.Services;
+using FlightPlanner_Core.Models;
 using FlightPlanner_Core.Services;
 using FlightPlanner_Core.Validations;
 using Microsoft.AspNetCore.Authentication;

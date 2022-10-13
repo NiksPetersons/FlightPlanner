@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Flight_planner.Models
+﻿namespace Flight_planner.Models
 {
     public class AirportRequest
     {

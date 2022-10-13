@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using Flight_planner.Models;
-using FlightPlanner.Data;
 using FlightPlanner_Core.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using FlightPlanner_Core.Models;
 
 namespace Flight_planner.Controllers
 {
@@ -12,13 +11,6 @@ namespace Flight_planner.Controllers
     [ApiController]
     public class CustomerApiController : ControllerBase
     {
-
-        //private readonly FlightPlannerDbContext _context;
-
-        //public CustomerApiController(FlightPlannerDbContext context)
-        //{
-        //    _context = context;
-        //}
         private readonly IFlightService _flightService;
         private readonly IMapper _mapper;
 
@@ -46,22 +38,24 @@ namespace Flight_planner.Controllers
                 return BadRequest();
             }
 
-            PageResults results = FlightList.SearchFlights(request, _context);
-            return Ok(results);
+            var flights = _flightService.SearchFlights(request.From, request.To, request.DepartureDate);
+            var flightRequests = _mapper.Map<List<Flight>,List<FlightRequest>>(flights).ToArray();
+            return Ok(new PageResults(flightRequests));
         }
 
-        //[Route("flights/{id}")]
-        //[HttpGet]
-        //public IActionResult GetFlight(int id)
-        //{
-        //    var flight = FlightList.GetFlight(id, _context);
+        [Route("flights/{id}")]
+        [HttpGet]
+        public IActionResult GetFlight(int id)
+        {
+            var flight = _flightService.GetCompleteFlightById(id);
 
-        //    if (flight == null)
-        //    {
-        //        return NotFound();
-        //    }
+            if (flight == null)
+            {
+                return NotFound();
+            }
 
-        //    return Ok(flight);
-        //}
+            var request = _mapper.Map<FlightRequest>(flight);
+            return Ok(request);
+        }
     }
 }

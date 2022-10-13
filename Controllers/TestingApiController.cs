@@ -1,5 +1,4 @@
-﻿using FlightPlanner_Core.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Flight_planner.Controllers
 {
@@ -7,12 +6,6 @@ namespace Flight_planner.Controllers
     [ApiController]
     public class TestingApiController : ControllerBase
     {
-        //private readonly IFlightService _flightService;
-
-        //public TestingApiController(IFlightService flightService)
-        //{
-        //    _flightService = flightService;
-        //}
         private readonly IFlightPlannerDbContext _context;
 
         public TestingApiController(IFlightPlannerDbContext context)

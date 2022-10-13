@@ -4,9 +4,9 @@
     {
         public int Page { get; set; }
         public int TotalItems { get; set; }
-        public Flight[] Items { get; set; }
+        public FlightRequest[] Items { get; set; }
 
-        public PageResults(Flight[] flights)
+        public PageResults(FlightRequest[] flights)
         {
             Page = 0;
             TotalItems = flights.Length;

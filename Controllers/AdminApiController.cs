@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using Flight_planner.Models;
 using FlightPlanner_Core.Services;
 using FlightPlanner_Core.Validations;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using FlightPlanner_Core.Models;
 
 namespace Flight_planner.Controllers
 {

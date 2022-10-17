@@ -62,10 +62,15 @@ namespace Flight_planner.Controllers
                     return Conflict();
                 }
 
-                _flightService.Create(flight);
-                request = _mapper.Map<FlightRequest>(flight);
+                var result = _flightService.Create(flight);
+                if (result.Success)
+                {
+                    request = _mapper.Map<FlightRequest>(flight);
 
-                return Created("", request);
+                    return Created("", request);
+                }
+
+                return Problem(result.FormattedErrors);
             }
         }
 
@@ -79,7 +84,13 @@ namespace Flight_planner.Controllers
 
                 if (flight != null)
                 {
-                    _flightService.Delete(flight);
+                    var result = _flightService.Delete(flight);
+                    if (result.Success)
+                    {
+                        return Ok();
+                    }
+
+                    return Problem(result.FormattedErrors);
                 }
 
                 return Ok();
